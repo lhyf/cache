@@ -4,16 +4,25 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.lhyf.cache.annotation.EnableMethodCache;
+import org.lhyf.cache.redis.Redis;
+import org.lhyf.cache.redis.Remote;
+import org.lhyf.cache.serializer.MsgSerializer;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportAware;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
+import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /****
@@ -61,17 +70,68 @@ public class CacheConfig implements ImportAware {
 
         // 使用Jackson2JsonRedisSerialize 替换默认序列化
         Jackson2JsonRedisSerializer jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer(Object.class);
+        MsgSerializer msgSerializer = new MsgSerializer();
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
-        objectMapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
-
-        jackson2JsonRedisSerializer.setObjectMapper(objectMapper);
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+//        objectMapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
+//
+//        jackson2JsonRedisSerializer.setObjectMapper(objectMapper);
 
         // 设置value的序列化规则和 key的序列化规则
         redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(jackson2JsonRedisSerializer);
+        redisTemplate.setValueSerializer(msgSerializer);
         redisTemplate.afterPropertiesSet();
         return redisTemplate;
     }
+
+
+
+
+//    @Bean
+//    public CacheManager cacheManager(RedisConnectionFactory factory){
+//        RedisCacheManager cacheManager = RedisCacheManager.create(factory);
+//        Cache cache = cacheManager.getCache("11");
+//        cache.put("AAA","aa");
+//        System.out.println(cache.get("AAA").get());
+//        return cacheManager;
+//    }
+
+    /**
+     *
+     @Value("#{host}")
+     private String host;
+
+     @Value("#{port}")
+     private String port;
+
+     @Value("#{passwd}")
+     private String passwd;
+
+     @Value("#{poolsize}")
+     private String poolsize;
+
+     @Value("#{maxConn}")
+     private String maxConn;
+
+     @Value("#{timeout}")
+     private String timeout;
+     * @param properties
+     * @return
+     */
+//    @Bean
+//    public Remote remote(CacheRedisProperties properties){
+//        Map<String, String> props = new HashMap<>();
+//        props.put("host",properties.getHost());
+//        props.put("port",properties.getPort());
+//        props.put("passwd",properties.getPasswd());
+//        props.put("poolsize",properties.getPoolsize());
+//        props.put("maxConn",properties.getMaxConn());
+//        props.put("timeout",properties.getTimeout());
+//
+//        Redis redis = new Redis();
+//        redis.init(props);
+//        return redis;
+//    }
+
 }

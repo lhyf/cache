@@ -13,7 +13,10 @@ import org.lhyf.cache.annotation.Cached;
 import org.lhyf.cache.config.ConfigMap;
 import org.lhyf.cache.exception.CacheException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
+import org.springframework.data.redis.cache.RedisCache;
+import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
@@ -40,6 +43,10 @@ public class CacheAspect {
     @Resource(name = "cacheRedisTemplate")
     private RedisTemplate<Object, Object> template;
 
+    @Autowired
+    private RedisCacheManager redisCacheManager;
+
+    // @EnableMethodCache 注解上的全局配置
     @Autowired
     private ConfigMap configMap;
 
@@ -185,6 +192,7 @@ public class CacheAspect {
 
             //删除所有region开头的Key
             if (allKey) {
+                RedisCache rediscache = (RedisCache) redisCacheManager.getCache(region);
                 Set<Object> keys = template.keys(region + ":*");
                 template.delete(keys);
             }
