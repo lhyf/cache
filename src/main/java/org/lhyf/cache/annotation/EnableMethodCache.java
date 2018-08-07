@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 @EnableAspectJAutoProxy
 @Import(ConfigSelector.class)
 public @interface EnableMethodCache {
+
     String region() default "";
     // 过期时间
     int expire() default 3600;

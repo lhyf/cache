@@ -23,15 +23,15 @@ import org.springframework.util.StringUtils;
  * @desc MsgSerializer
  *
  **/
-public class MsgSerializer implements RedisSerializer<Object> {
+public class MsgPackSerializer implements RedisSerializer<Object> {
 
     static final byte[] EMPTY_ARRAY = new byte[0];
     private final ObjectMapper mapper;
 
 
-    public MsgSerializer() {
+    public MsgPackSerializer() {
         this.mapper = new ObjectMapper(new MessagePackFactory());
-        this.mapper.registerModule((new SimpleModule()).addSerializer(new MsgSerializer.NullValueSerializer(null)));
+        this.mapper.registerModule((new SimpleModule()).addSerializer(new MsgPackSerializer.NullValueSerializer(null)));
         this.mapper.enableDefaultTyping(DefaultTyping.NON_FINAL, As.PROPERTY);
     }
 

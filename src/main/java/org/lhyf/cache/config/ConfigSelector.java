@@ -1,6 +1,7 @@
 package org.lhyf.cache.config;
 
 import org.lhyf.cache.interceptor.CacheAspect;
+import org.lhyf.cache.util.RedisCacheUtils;
 import org.springframework.context.annotation.ImportSelector;
 import org.springframework.core.type.AnnotationMetadata;
 
@@ -15,15 +16,18 @@ import java.util.List;
  **/
 public class ConfigSelector implements ImportSelector {
 
-    private String[] getProxyImports() {
-        List<String> result = new ArrayList<String>();
-        result.add(CacheAspect.class.getName());
-        result.add(CacheConfig.class.getName());
-        return result.toArray(new String[result.size()]);
-    }
-
     @Override
     public String[] selectImports(AnnotationMetadata importingClassMetadata) {
         return getProxyImports();
     }
+
+
+    private String[] getProxyImports() {
+        List<String> result = new ArrayList<String>();
+        result.add(CacheAspect.class.getName());
+        result.add(CacheConfig.class.getName());
+        result.add(RedisCacheUtils.class.getName());
+        return result.toArray(new String[result.size()]);
+    }
+
 }

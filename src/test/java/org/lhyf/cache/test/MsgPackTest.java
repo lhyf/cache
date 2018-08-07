@@ -1,7 +1,6 @@
-package org.lhyf.cache.serializer;
+package org.lhyf.cache.test;
 
 import org.junit.Test;
-import org.lhyf.cache.config.User;
 import org.msgpack.core.MessagePack;
 import org.msgpack.core.MessagePack.PackerConfig;
 import org.msgpack.core.MessagePack.UnpackerConfig;
@@ -20,9 +19,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /****
  * @author YF

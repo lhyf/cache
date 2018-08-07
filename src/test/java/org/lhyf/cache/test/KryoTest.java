@@ -1,4 +1,4 @@
-package org.lhyf.cache.serializer;
+package org.lhyf.cache.test;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;

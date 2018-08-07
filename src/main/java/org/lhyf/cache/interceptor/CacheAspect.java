@@ -12,12 +12,9 @@ import org.lhyf.cache.annotation.CachePut;
 import org.lhyf.cache.annotation.Cached;
 import org.lhyf.cache.config.ConfigMap;
 import org.lhyf.cache.exception.CacheException;
+import org.lhyf.cache.util.RedisCacheUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.Cache;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
-import org.springframework.data.redis.cache.RedisCache;
-import org.springframework.data.redis.cache.RedisCacheManager;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
@@ -25,7 +22,6 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.lang.reflect.Method;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -40,11 +36,8 @@ import java.util.concurrent.TimeUnit;
 @Aspect
 public class CacheAspect {
 
-    @Resource(name = "cacheRedisTemplate")
-    private RedisTemplate<Object, Object> template;
-
     @Autowired
-    private RedisCacheManager redisCacheManager;
+    private RedisCacheUtils redisCacheUtils;
 
     // @EnableMethodCache 注解上的全局配置
     @Autowired
@@ -192,9 +185,7 @@ public class CacheAspect {
 
             //删除所有region开头的Key
             if (allKey) {
-                RedisCache rediscache = (RedisCache) redisCacheManager.getCache(region);
-                Set<Object> keys = template.keys(region + ":*");
-                template.delete(keys);
+                redisCacheUtils.clear(region + ":*");
             }
 
             if (!allKey) {
@@ -202,8 +193,8 @@ public class CacheAspect {
 
                 for (String k : seplkey) {
                     String key = getKey(spelContext, k);
-                    Set<Object> keys = template.keys(region + ":" + key);
-                    template.delete(keys);
+                    Set<String> keys = redisCacheUtils.keys(region + ":" + key);
+                    redisCacheUtils.delete(keys);
                 }
 
             }
@@ -226,8 +217,7 @@ public class CacheAspect {
      * @param timeUnit 时间单位
      */
     private void cachePut(String key, Object result, int expire, TimeUnit timeUnit) {
-        template.opsForValue().set(key, result);
-        template.expire(key, expire, timeUnit);
+        redisCacheUtils.setCacheObject(key,result,expire,timeUnit);
     }
 
 
@@ -238,7 +228,7 @@ public class CacheAspect {
      * @return
      */
     private Object cacheGet(String key) {
-        return template.opsForValue().get(key);
+        return redisCacheUtils.getCacheObject(key);
     }
 
     /**
