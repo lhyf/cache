@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
  **/
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface CacheEvict {
+public @interface CacheRemove {
 
     String region() default "";
     String[] key();

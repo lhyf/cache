@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
  **/
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface CachePut {
+public @interface CacheAdd {
 
     String region() default "";
 

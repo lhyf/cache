@@ -5,6 +5,7 @@ import org.lhyf.cache.serializer.MsgPackSerializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportAware;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -33,6 +34,7 @@ public class CacheConfig implements ImportAware {
                 importMetadata.getAnnotationAttributes(EnableMethodCache.class.getName(), false));
     }
 
+    @Primary
     @Bean
     public ConfigMap configMap(){
         ConfigMap map = new ConfigMap();

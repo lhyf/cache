@@ -7,8 +7,8 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.lhyf.cache.annotation.CacheEvict;
-import org.lhyf.cache.annotation.CachePut;
+import org.lhyf.cache.annotation.CacheAdd;
+import org.lhyf.cache.annotation.CacheRemove;
 import org.lhyf.cache.annotation.Cached;
 import org.lhyf.cache.config.ConfigMap;
 import org.lhyf.cache.exception.CacheException;
@@ -116,7 +116,7 @@ public class CacheAspect {
      * @param joinPoint
      * @param result
      */
-    @AfterReturning(value = "@annotation(org.lhyf.cache.annotation.CachePut)", returning = "result")
+    @AfterReturning(value = "@annotation(org.lhyf.cache.annotation.CacheAdd)", returning = "result")
     private void cachePutProcess(JoinPoint joinPoint, Object result) {
         try {
 
@@ -127,7 +127,7 @@ public class CacheAspect {
             MethodSignature signature = (MethodSignature) joinPoint.getSignature();
             Method method = signature.getMethod();
             Object[] args = joinPoint.getArgs();
-            CachePut cachePut = method.getAnnotation(CachePut.class);
+            CacheAdd cachePut = method.getAnnotation(CacheAdd.class);
             String seplkey = cachePut.key();
 
             // 如果单独配置了,则覆盖全局配置
@@ -165,7 +165,7 @@ public class CacheAspect {
      * @param joinPoint
      * @return
      */
-    @Around("@annotation(org.lhyf.cache.annotation.CacheEvict)")
+    @Around("@annotation(org.lhyf.cache.annotation.CacheRemove)")
     private Object cachedCacheEvict(ProceedingJoinPoint joinPoint) {
         Object result = null;
 
@@ -174,7 +174,7 @@ public class CacheAspect {
             MethodSignature signature = (MethodSignature) joinPoint.getSignature();
             Method method = signature.getMethod();
             Object[] args = joinPoint.getArgs();
-            CacheEvict cacheEvict = method.getAnnotation(CacheEvict.class);
+            CacheRemove cacheEvict = method.getAnnotation(CacheRemove.class);
 
             String[] seplkey = cacheEvict.key();
             // 如果单独配置了,则覆盖全局配置
@@ -239,6 +239,7 @@ public class CacheAspect {
      * @return
      */
     private EvaluationContext getSpelContext(Method method, Object[] args) {
+        discoverer = new LocalVariableTableParameterNameDiscoverer();
         String[] params = discoverer.getParameterNames(method);
         EvaluationContext context = new StandardEvaluationContext();
         for (int len = 0; len < params.length; len++) {
